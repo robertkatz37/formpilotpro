@@ -1,0 +1,8 @@
+FormPilot Pro 10.22.1
+
+Builder fixes:
+- Palette drag-and-drop now inserts the new field at the exact sortable position instead of always above Submit.
+- Repeater child inspector bindings now run after the inspector HTML is mounted.
+- Existing repeater child fields now load into the inspector and can be renamed, marked required, deleted, and reordered.
+- Repeater "+ Add Field" now works and immediately adds the selected child field.
+- JS asset version remains tied to the plugin version for cache invalidation.

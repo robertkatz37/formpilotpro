@@ -1,0 +1,427 @@
+<?php
+/**
+ * Plugin Name: FormPilot License Manager
+ * Description: Commercial licensing, Stripe sales, customer accounts, domain activations, gated downloads and WordPress update delivery for FormPilot Pro.
+ * Version: 4.1.4
+ * Author: FormPilot
+ * Text Domain: formpilot-license-manager
+ */
+if (!defined('ABSPATH')) exit;
+
+define('FPLM_VERSION', '4.1.4');
+define('FPLM_SITE_URL', 'https://formpilot.healthsdriven.com');
+/* IMPORTANT: this private key must ONLY exist on your private license server. Never ship this plugin to customers. */
+define('FPLM_SIGNING_PRIVATE_KEY', <<<'FORMPILOT_PRIVATE_KEY'
+-----BEGIN PRIVATE KEY-----
+MIIG/gIBADANBgkqhkiG9w0BAQEFAASCBugwggbkAgEAAoIBgQDUJsN/4IeyeoVD
+ewIuF3cPgJ2B8c10dhBnFo1mMU4GwszXsNHjVyybQ6y3BkTK4CDrLaQBQNXVc/8U
+iAXYgISX1W8MnbwpP3GrMF964M1UZAF537/meEsrP7QKyiKD8T62wQ8EFmaOODco
+QCWB55UFvnCRTwF50QAGd2Ky6IGZ2m1CETub9PqRcRvVcuyoqqu/O+IzUxoMDgm5
+YTU8CWIinEuKLxGOmNsH4ZWBBHzXK1YTow4bF/lUbF+pSobXPqfYH0EUAwN21yd5
+iSOvXiCl9GWiwEWOkF+E4VAs0ME7Hg4Mjr+6D0J5X8nOrWTb56AT6eqJMO5sTN94
+CVSVI9LLTGDM18TA2RJ8q4iweMm/J6zfqHw4yV5RNesBESZ2yIzurDlD8We4wflv
+qom3wnwlqRM0tpwVuERaDEsLhSQSHGiKoEqoSEfYI1Wqx17qpjHa5C9rw8Q6qz5D
+TdFViefWBE3nt8tPlQtXIppP5wE1z+g7MCFzS0XqxzGNu0SvpVECAwEAAQKCAYAu
+ZWXW5wc2KKZRSisBYn9WxBVuMC/y+sj+ioeU5E6AmwSKXTChq9RlBklU44mS5q48
+UIhv/7pkCpCr8E16+ixFOlelZi+aw7W7rwIKkPRGsvJBsYW5xPAHftCElY0z1sQU
+2qbKiY2XJ8MkSdcKEFfeYDYlCSa0+disEVrj7oY9W/AOBU/IfSx5N0fTh+Uqw9x4
+n4OKHu/w1/cXdCNcxF6SXCUHDOElktc/4307MHyO3/rco4m3sigEZwkKsHJJy3kq
+jwHwyWqxS/t08ilRK+c4D6VoMqTsbidu8nwUswQ/4n51tohdSdM9QF0OXYM4sruz
+s/Yj91Z+twtsgcRQ7kuPef1mIiYzQpnY4hhNeT2cBaQwMSGn0Hr6WPCfAEmpTEcq
+mF9zLVoi7Qge3onyW/UAFji2+dq0G5zab82yNzTO/SSiZdXJ7X9RlX+C+7FWt4Qu
+ZoFVUg9VJ3c6Xl/h06unMKCxfIMULqPZbHPXG02Q9aSjjvfkJ22OgifZFuc014sC
+gcEA7VdWkoNLNhSwCxqY7/TixZQFl6qgwuH9f90N/nvq7brOdYHjCpvRhmBzTV2h
+C/DuLnmJLnnnao6+Bf4EHgRT8J4Vj4DFOsQo4WQBpUGhvqFPAaz5JBm8RMLgB16l
+G/M/058P2HHSg2FON2Dhca9tusIhRxWcsPbnUciJdN29R/bliUWceb/Rju92yLkJ
+WQA7l+ywET5hdIeLjp/RVsOIC8pU7J7dSq7plEfY0cTU2GtTpdu1fGVRvrFy8Mvi
+eDxrAoHBAOTUdrjqsVGiuNv9/fCEclz2fiSJSS7B70sZA1mQPIjMtJshuRBUDtyE
+UftpXiillm0oHY2qT4hRygoPXz3//Oy/MW+8Npw5fbAJFt0IpLceWLC07138vGN0
+SOlELknSOsp8hL6xHbpafzFqyOZLOW1jzOyy6NXN1yH0pS3vBEw93Rteu0vdjwyq
+EUMBLGrrD54TMk1b6J/P8EuSY/r15SMy0jXd8y158/+0CUt+WnqA3wtZBZ/xWH4T
+CodqmtnUMwKBwQCA7MCKNefVKMe4QGpzboMA8LdY+8b4FequWlYPtyCWorMkAbpj
+OOFILXx0ujeRVP8NH9f09yNOLtvqRWHXLGKsgjMUEM8SbRwH01tReaVy+A0CzANK
+KPCsKW+okTD/TdOOEQl6ednwpBro2iecqb7hhDKven3zYyuksVp5sTnwrZ1iQ/4L
+5Lbg/hN4VYtOXWIB1QCPXWNy+W5Fu2rrxqtQPEiFgIaU2w7nDWAqEtHL/gEiR4b+
+W8tb2uilBRuwVKECgcEArV9kTBpVGpsFIHjCC5bt5w1C6X+ymOCK4wUiiptDogom
+1Fqqknp9gAoo6ykcFAPRgwafzZO6CnidcR3QdXMcOGtrk1KwtZDBb7yTPAiuc6dk
+Xw3XRgiU221hSItF3tyPepb5JFmhQm4KbHCRohpgekbhHn0297arRqjK9ZBgWzuL
+6I7PrV1CYr//sBqVgrRx8rxsojv+dgbf8wIJCj1/zDlXF0UAV/ZMLfJEEJS9DI/T
+bg+WuWXsPClFEvBsPpoNAoHAdggV1hEu2phEHiUhBXCNycE5Z1kXMadI6j+Oah28
+Y53Mj5uOIXZhm8I0mhYIP02+nxLrFrjPRR/dZCWpyp4EcqMFWZY0RtToUCElM9Bd
+OAfSl/logMgk5x5X5eFCgOoNcPZmuLjq1V6dzkLK5jm3xgXCLvdEaafTZSpA5TAS
+L5I05Vz+A3YZPcMn76Xyo6gppQCAUSZoGI0NEFvakmsKr2JwuWtvWeYB0UMvH8VX
+PkUjopbrkQtR1+TqbrcskQV5
+-----END PRIVATE KEY-----
+FORMPILOT_PRIVATE_KEY
+);
+
+function fplm_tables() { global $wpdb; return ['licenses'=>$wpdb->prefix.'fplm_licenses','activations'=>$wpdb->prefix.'fplm_activations','orders'=>$wpdb->prefix.'fplm_orders','releases'=>$wpdb->prefix.'fplm_releases','events'=>$wpdb->prefix.'fplm_events']; }
+function fplm_install() {
+    global $wpdb; require_once ABSPATH.'wp-admin/includes/upgrade.php'; $c=$wpdb->get_charset_collate(); $t=fplm_tables();
+    dbDelta("CREATE TABLE {$t['licenses']} (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, user_id bigint(20) unsigned NOT NULL DEFAULT 0, license_hash char(64) NOT NULL, license_last4 varchar(4) NOT NULL, encrypted_key longtext NULL, customer_name varchar(190) NOT NULL DEFAULT '', customer_email varchar(190) NOT NULL DEFAULT '', plan varchar(50) NOT NULL DEFAULT 'premium', status varchar(20) NOT NULL DEFAULT 'pending', max_activations smallint unsigned NOT NULL DEFAULT 1, activations_count smallint unsigned NOT NULL DEFAULT 0, expires_at datetime NULL, features longtext NOT NULL, amount decimal(12,2) NOT NULL DEFAULT 0, currency varchar(10) NOT NULL DEFAULT 'USD', billing_interval varchar(20) NOT NULL DEFAULT 'annual', stripe_customer_id varchar(100) NOT NULL DEFAULT '', stripe_subscription_id varchar(100) NOT NULL DEFAULT '', stripe_checkout_session_id varchar(100) NOT NULL DEFAULT '', created_at datetime NOT NULL, updated_at datetime NOT NULL, PRIMARY KEY(id), UNIQUE KEY license_hash(license_hash), KEY user_id(user_id), KEY status(status), KEY customer_email(customer_email), KEY stripe_customer_id(stripe_customer_id), KEY stripe_subscription_id(stripe_subscription_id)) {$c};");
+    dbDelta("CREATE TABLE {$t['activations']} (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, license_id bigint(20) unsigned NOT NULL, domain varchar(255) NOT NULL, site_url text NOT NULL, site_hash char(64) NOT NULL, status varchar(20) NOT NULL DEFAULT 'active', plugin_version varchar(30) NOT NULL DEFAULT '', wp_version varchar(30) NOT NULL DEFAULT '', activated_at datetime NOT NULL, last_seen datetime NOT NULL, PRIMARY KEY(id), UNIQUE KEY license_domain(license_id,domain), KEY license_id(license_id), KEY site_hash(site_hash)) {$c};");
+    dbDelta("CREATE TABLE {$t['orders']} (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, license_id bigint(20) unsigned NOT NULL DEFAULT 0, user_id bigint(20) unsigned NOT NULL DEFAULT 0, email varchar(190) NOT NULL DEFAULT '', plan varchar(50) NOT NULL DEFAULT '', amount decimal(12,2) NOT NULL DEFAULT 0, currency varchar(10) NOT NULL DEFAULT 'USD', status varchar(30) NOT NULL DEFAULT 'pending', stripe_session_id varchar(100) NOT NULL DEFAULT '', stripe_payment_intent_id varchar(100) NOT NULL DEFAULT '', stripe_subscription_id varchar(100) NOT NULL DEFAULT '', created_at datetime NOT NULL, paid_at datetime NULL, PRIMARY KEY(id), KEY license_id(license_id), KEY user_id(user_id), KEY email(email), KEY stripe_session_id(stripe_session_id)) {$c};");
+    dbDelta("CREATE TABLE {$t['releases']} (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, version varchar(30) NOT NULL, channel varchar(20) NOT NULL DEFAULT 'stable', title varchar(190) NOT NULL DEFAULT '', changelog longtext NULL, file_path text NOT NULL, file_size bigint unsigned NOT NULL DEFAULT 0, sha256 char(64) NOT NULL DEFAULT '', min_wp varchar(30) NOT NULL DEFAULT '5.8', tested_wp varchar(30) NOT NULL DEFAULT '', requires_php varchar(30) NOT NULL DEFAULT '7.4', created_at datetime NOT NULL, PRIMARY KEY(id), KEY version(version), KEY channel(channel)) {$c};");
+    dbDelta("CREATE TABLE {$t['events']} (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, event_id varchar(190) NOT NULL, event_type varchar(100) NOT NULL DEFAULT '', received_at datetime NOT NULL, PRIMARY KEY(id), UNIQUE KEY event_id(event_id)) {$c};");
+}
+register_activation_hook(__FILE__,'fplm_install');
+function fplm_table_has_column($table,$column){
+    global $wpdb;
+    return (bool)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND COLUMN_NAME=%s",$table,$column));
+}
+function fplm_repair_activation_schema(){
+    global $wpdb; $t=fplm_tables(); $table=$t['activations'];
+    if($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$table))!==$table){ fplm_install(); return; }
+    $defs=[
+        'license_id'=>'bigint(20) unsigned NOT NULL DEFAULT 0',
+        "domain"=>"varchar(255) NOT NULL DEFAULT ''",
+        'site_url'=>'text NOT NULL',
+        "site_hash"=>"char(64) NOT NULL DEFAULT ''",
+        "status"=>"varchar(20) NOT NULL DEFAULT 'active'",
+        "plugin_version"=>"varchar(30) NOT NULL DEFAULT ''",
+        "wp_version"=>"varchar(30) NOT NULL DEFAULT ''",
+        'activated_at'=>'datetime NULL',
+        'last_seen'=>'datetime NULL'
+    ];
+    foreach($defs as $column=>$definition){
+        if(!fplm_table_has_column($table,$column)){
+            $wpdb->query("ALTER TABLE `{$table}` ADD COLUMN `{$column}` {$definition}");
+        }
+    }
+    if(fplm_table_has_column($table,'status')) $wpdb->query("UPDATE `{$table}` SET `status`='active' WHERE `status` IS NULL OR `status`=''");
+    if(fplm_table_has_column($table,'activated_at')) $wpdb->query("UPDATE `{$table}` SET `activated_at`=COALESCE(`activated_at`,`last_seen`,UTC_TIMESTAMP()) WHERE `activated_at` IS NULL");
+    if(fplm_table_has_column($table,'last_seen')) $wpdb->query("UPDATE `{$table}` SET `last_seen`=COALESCE(`last_seen`,`activated_at`,UTC_TIMESTAMP()) WHERE `last_seen` IS NULL");
+}
+function fplm_ensure_schema(){
+    static $done=false;
+    if($done)return;
+    $done=true;
+    $version=get_option('fplm_db_version','');
+    if($version!=='4.1.4'){ fplm_install(); update_option('fplm_db_version','4.1.4',false); }
+    global $wpdb; $t=fplm_tables();
+    foreach($t as $table){ if($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$table))!==$table){ fplm_install(); break; } }
+    fplm_repair_activation_schema();
+}
+add_action('plugins_loaded','fplm_ensure_schema',1);
+add_action('rest_api_init',function(){ fplm_ensure_schema(); },1);
+add_action('admin_init',function(){ global $wpdb; fplm_ensure_schema(); $t=fplm_tables(); foreach($t as $table){ if($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$table))!==$table){ fplm_install(); break; } } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-8.0.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'8.0.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'8.0.0','channel'=>'stable','title'=>'FormPilot Pro 8.0.0','changelog'=>'Free tier + paid entitlement gating, premium template library, and Calendly-style scheduling foundations.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-9.0.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'9.0.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'9.0.0','channel'=>'stable','title'=>'FormPilot Pro 9.0.0','changelog'=>'Real scheduling suite: event types, availability engine, one-on-one, group, collective, round-robin, routing, workflows, meeting polls, single-use links, contacts, analytics, teams, webhooks/API and branded booking pages.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.0.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.0.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.0.0','channel'=>'stable','title'=>'FormPilot Pro 10.0.0','changelog'=>'Production subsystems: durable workflow queue, reminders/follow-ups, cancellation/rescheduling, collective host records, fair round-robin, paid scheduler checkout, invoices, Zoom/Meet/Teams conferencing, HubSpot/Salesforce sync, API keys, reliable webhooks, advanced analytics, routing builder, public meeting polls, branding, recurring series and remote scheduling-template marketplace.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.3.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.3.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.3.0','channel'=>'stable','title'=>'FormPilot Pro 10.3.0','changelog'=>'Launch polish: unified Help & Launch Guide, contextual quick-start instructions and examples across every FormPilot admin screen, provider-specific setup guides for Google Calendar/Meet, Stripe, Zoom, Microsoft Teams, HubSpot and Salesforce, dynamic launch checklist, and responsive onboarding UI.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.5.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.5.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.5.0','channel'=>'stable','title'=>'FormPilot Pro 10.5.0','changelog'=>'Unified integration setup UX: every provider now uses the same clear status, what-it-does, numbered setup guide, credential form, test connection and after-connection flow. Google Calendar and Stripe now have dedicated FormPilot integration pages while preserving their existing OAuth/payment engines.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.4.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.4.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.4.0','channel'=>'stable','title'=>'FormPilot Pro 10.4.0','changelog'=>'Launch readiness: resilient local template marketplace fallback, professional marketplace UI, dedicated provider integration pages for Google Calendar, Stripe, Zoom, Microsoft Teams, HubSpot and Salesforce, guided provider setup flows, live workflow demos, invoice visibility and print/save-PDF experience, full Event Type edit/pause/delete controls and improved scheduling administration.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.7.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.7.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.7.0','channel'=>'stable','title'=>'FormPilot Pro 10.7.0','changelog'=>'Free plan now allows up to 3 forms. Form Templates are a Pro-only library with a dedicated Form Templates screen inside Templates & Branding, including category browsing and one-click installation into the real Form Builder. Forms now show free-plan usage and clear upgrade paths.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+
+function fplm_license_key(){ return 'FP-'.implode('-',str_split(strtoupper(bin2hex(random_bytes(12))),4)); }
+function fplm_hash($key){ return hash('sha256',strtoupper(trim($key))); }
+function fplm_encrypt($value){ $key=hash('sha256',AUTH_KEY.SECURE_AUTH_KEY,true); $iv=random_bytes(16); return base64_encode($iv.openssl_encrypt($value,'AES-256-CBC',$key,OPENSSL_RAW_DATA,$iv)); }
+function fplm_decrypt($value){ $raw=base64_decode((string)$value,true); if(!$raw||strlen($raw)<17)return ''; $key=hash('sha256',AUTH_KEY.SECURE_AUTH_KEY,true); $plain=openssl_decrypt(substr($raw,16),'AES-256-CBC',$key,OPENSSL_RAW_DATA,substr($raw,0,16)); return is_string($plain)?$plain:''; }
+function fplm_domain($url){ $host=strtolower((string)wp_parse_url($url,PHP_URL_HOST)); return preg_replace('/^www\./','',$host); }
+function fplm_features_default(){ return [
+'core'=>true,'forms'=>true,'builder'=>true,'templates'=>true,'integrations'=>true,'stripe'=>true,'payment_links'=>true,'google_calendar'=>true,'google_meet'=>true,'advanced_styling'=>true,'branding'=>true,'custom_css'=>true,'analytics'=>true,'routing'=>true,'workflows'=>true,'team_scheduling'=>true,'round_robin'=>true,'collective_events'=>true,'group_events'=>true,'single_use_links'=>true,'meeting_polls'=>true,'reminders'=>true,'followups'=>true,'webhooks'=>true,'api'=>true,'crm_integrations'=>true,'video_integrations'=>true,'ga4'=>true,'meta_pixel'=>true,'contacts'=>true,'invoices'=>true,'updates'=>true,'priority_support'=>true
+]; }
+function fplm_plans(){ $d=['premium'=>['name'=>'Premium','description'=>'For one production website with the full FormPilot scheduling toolkit.','amount'=>99,'currency'=>'USD','interval'=>'annual','activations'=>1,'features'=>fplm_features_default()],'agency'=>['name'=>'Agency','description'=>'For agencies and teams managing multiple client websites.','amount'=>299,'currency'=>'USD','interval'=>'annual','activations'=>10,'features'=>fplm_features_default()],'lifetime'=>['name'=>'Lifetime','description'=>'One-time lifetime license with the full commercial feature set.','amount'=>499,'currency'=>'USD','interval'=>'lifetime','activations'=>3,'features'=>fplm_features_default()]]; $s=get_option('fplm_plans',[]); return array_replace_recursive($d,is_array($s)?$s:[]); }
+function fplm_get_license($key){ global $wpdb; $t=fplm_tables(); return $wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE license_hash=%s LIMIT 1",fplm_hash($key))); }
+function fplm_is_expired($row){ return !empty($row->expires_at)&&strtotime($row->expires_at)<current_time('timestamp'); }
+function fplm_response($ok,$data=[],$status=200){ return new WP_REST_Response(array_merge(['valid'=>(bool)$ok],$data),$status); }
+function fplm_rate_limited(){ $ip=sanitize_text_field($_SERVER['REMOTE_ADDR']??'unknown'); $k='fplm_rate_'.hash('sha256',$ip); $n=(int)get_transient($k); if($n>=180)return true; set_transient($k,$n+1,MINUTE_IN_SECONDS); return false; }
+function fplm_api_guard(){ return fplm_rate_limited()?new WP_Error('fplm_rate_limited','Too many requests.',['status'=>429]):true; }
+function fplm_license_entitlement($row,$domain){ $f=json_decode($row->features,true); if(!is_array($f))$f=fplm_features_default(); return ['license_id'=>(int)$row->id,'plan'=>$row->plan,'status'=>$row->status,'domain'=>$domain,'expires_at'=>$row->expires_at,'features'=>$f,'limits'=>['forms'=>-1,'entries_month'=>-1,'templates'=>-1,'event_types'=>-1,'bookings_month'=>-1,'team_members'=>($row->plan==='agency'?25:10)],'max_activations'=>(int)$row->max_activations,'issued_at'=>time(),'product'=>'formpilot-pro']; }
+function fplm_signing_public_fingerprint(){ static $fp=null; if($fp!==null)return $fp; $details=openssl_pkey_get_details(openssl_pkey_get_private(FPLM_SIGNING_PRIVATE_KEY)); $fp=''; if(is_array($details)&&!empty($details['key'])){ $pem=preg_replace('/\r|\n/','',$details['key']); $der=base64_decode(preg_replace('/-----[^-]+-----/','',$pem),true); if($der)$fp=strtoupper(hash('sha256',$der)); } return $fp; }
+function fplm_license_payload($row,$domain){
+    $e=fplm_license_entitlement($row,$domain);
+    $activation=fplm_activation($row,$domain);
+    $e['activation_verified']=is_object($activation) && (($activation->status ?? '')==='active');
+    $e['activation_id']=$activation ? (int)$activation->id : 0;
+    $json=wp_json_encode($e,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+    if($json===false || $json==='') return ['license'=>$e,'signature'=>'','signed_payload'=>'','signature_alg'=>'RSA-SHA256','signature_key_id'=>'fp-key-1','signature_public_fingerprint'=>fplm_signing_public_fingerprint(),'signature_self_check'=>false,'signature_error'=>'Unable to serialize entitlement JSON.'];
+    $sig='';
+    $signed=openssl_sign($json,$sig,FPLM_SIGNING_PRIVATE_KEY,OPENSSL_ALGO_SHA256);
+    $pub=''; $details=openssl_pkey_get_details(openssl_pkey_get_private(FPLM_SIGNING_PRIVATE_KEY)); if(is_array($details)&&!empty($details['key'])) $pub=$details['key'];
+    $self=$signed && $sig!=='' && $pub!=='' && openssl_verify($json,$sig,$pub,OPENSSL_ALGO_SHA256)===1;
+    $errors=[]; while(function_exists('openssl_error_string') && ($err=openssl_error_string())) $errors[]=$err;
+    return ['license'=>$e,'signature'=>$sig?base64_encode($sig):'','signed_payload'=>base64_encode($json),'signature_alg'=>'RSA-SHA256','signature_key_id'=>'fp-key-1','signature_public_fingerprint'=>fplm_signing_public_fingerprint(),'payload_sha256'=>strtoupper(hash('sha256',$json)),'signature_self_check'=>(bool)$self,'signature_error'=>$self?'':implode(' | ',$errors)];
+} 
+
+function fplm_activation_fallback_key($license_id,$domain){ return 'fplm_activation_fallback_'.absint($license_id).'_'.hash('sha256',strtolower(trim((string)$domain))); }
+function fplm_activation_fallback_get($license_id,$domain){ $v=get_option(fplm_activation_fallback_key($license_id,$domain),null); return is_array($v)?(object)$v:null; }
+function fplm_activation_fallback_set($license_id,$domain,$data){ $data=is_object($data)?get_object_vars($data):(array)$data; $data['license_id']=absint($license_id); $data['domain']=sanitize_text_field((string)$domain); $data['status']=sanitize_key((string)($data['status']??'active')); $data['updated_at']=current_time('mysql'); return update_option(fplm_activation_fallback_key($license_id,$domain),$data,false); }
+function fplm_activation_fallback_delete($license_id,$domain){ return delete_option(fplm_activation_fallback_key($license_id,$domain)); }
+function fplm_activation($row,$domain){ global $wpdb; $t=fplm_tables(); $table=$t['activations']; $exists=($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$table))===$table); if($exists){ $v=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE license_id=%d AND domain=%s LIMIT 1",$row->id,$domain)); if($v)return $v; } return fplm_activation_fallback_get($row->id,$domain); }
+function fplm_activation_count($license_id){ global $wpdb; $t=fplm_tables(); $count=0; if($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$t['activations']))===$t['activations']){ $where=fplm_table_has_column($t['activations'],'status') ? " AND status='active'" : ''; $count=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['activations']} WHERE license_id=%d{$where}",$license_id)); } $opts=$wpdb->get_results($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name LIKE %s",'fplm_activation_fallback_'.absint($license_id).'_%')); foreach((array)$opts as $o){$v=maybe_unserialize($o->option_value); if(is_array($v)&&($v['status']??'active')==='active'){$domain=strtolower(trim((string)($v['domain']??''))); $db_same=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['activations']} WHERE license_id=%d AND domain=%s",$license_id,$domain)); if(!$db_same)$count++;}} return $count; }
+function fplm_validate_row_domain($row,$domain){ if(!$row)return 'Invalid license key.'; if($row->status!=='active')return 'This license is '.$row->status.'.'; if(fplm_is_expired($row))return 'This license has expired.'; $act=fplm_activation($row,$domain); if(!$act)return 'This domain is not activated for the license.'; if(isset($act->status) && $act->status!=='active')return 'This domain activation is '.$act->status.'.'; return ''; }
+
+
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.9.5.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.9.5')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.9.5','channel'=>'stable','title'=>'FormPilot Pro 10.9.5','changelog'=>'License activation schema repair, safe refresh fallback, and License Manager activation visibility improvements.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.9.6.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.9.6')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.9.6','channel'=>'stable','title'=>'FormPilot Pro 10.9.6','changelog'=>'Realtime admin UX: instant License Manager tabs, live activation refresh, and asynchronous client license controls.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.12.0.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.12.0')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.12.2','channel'=>'stable','title'=>'FormPilot Pro 10.12.0','changelog'=>'Fixes the Analytics admin fatal error and upgrades Smart Schedule Booking into a full builder-style editor with core-field controls, custom fields, settings, live preview and editable labels/options.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.9.4.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.9.4')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.9.4','channel'=>'stable','title'=>'FormPilot Pro 10.9.4','changelog'=>'License activation persistence fallback, resilient validation, and corrected client version metadata.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+add_action('admin_init',function(){ global $wpdb; $t=fplm_tables(); $file=plugin_dir_path(__FILE__).'releases/formpilot-pro-10.9.2.zip'; $exists=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t['releases']} WHERE version=%s",'10.9.2')); if(!$exists && is_readable($file)){ $wpdb->insert($t['releases'],['version'=>'10.9.2','channel'=>'stable','title'=>'FormPilot Pro 10.9.2','changelog'=>'License activation reliability: verified activation persistence, automatic repair of missing domain activation, and clearer server activation diagnostics.','file_path'=>$file,'file_size'=>filesize($file),'sha256'=>hash_file('sha256',$file),'min_wp'=>'5.8','tested_wp'=>'','requires_php'=>'7.4','created_at'=>current_time('mysql')]); } });
+
+function fplm_scheduling_templates(){
+    $weekday=[]; foreach([1,2,3,4,5] as $d)$weekday[]=['day'=>$d,'start'=>'09:00','end'=>'17:00'];
+    $items=[
+      ['sales-discovery','Sales Discovery Call','Qualify a new opportunity and define next steps.','one_on_one',30,'meet',1],
+      ['product-demo','Product Demo','A structured product demonstration with Q&A.','one_on_one',45,'meet',1],
+      ['enterprise-demo','Enterprise Demo','Long-form enterprise discovery and technical demo.','collective',60,'meet',1],
+      ['customer-onboarding','Customer Onboarding','Kick off a new customer relationship.','collective',60,'meet',1],
+      ['support-triage','Support Triage','Fast issue assessment and escalation.','round_robin',30,'zoom',1],
+      ['sales-round-robin','Sales Round Robin','Distribute inbound sales meetings across available reps.','round_robin',30,'meet',1],
+      ['candidate-screen','Candidate Screen','Initial recruiting conversation.','one_on_one',30,'meet',1],
+      ['panel-interview','Panel Interview','Multi-interviewer candidate session.','collective',60,'teams',1],
+      ['office-hours','Office Hours','Shared office-hours session with limited seats.','group',30,'meet',8],
+      ['webinar-qa','Webinar Q&A','Small-group Q&A following a webinar.','group',45,'zoom',20],
+      ['coaching-session','Coaching Session','Private coaching appointment.','one_on_one',60,'zoom',1],
+      ['therapy-consult','Consultation Session','Private consultation scheduling template.','one_on_one',50,'meet',1],
+      ['legal-intake','Legal Intake Consultation','Initial consultation and intake review.','one_on_one',45,'meet',1],
+      ['financial-review','Financial Review','Portfolio or planning review meeting.','one_on_one',60,'teams',1],
+      ['agency-kickoff','Agency Project Kickoff','Multi-stakeholder project kickoff.','collective',60,'meet',1],
+      ['design-review','Design Review','Review designs with client stakeholders.','collective',45,'meet',1],
+      ['training-session','Training Session','Book a small-group training session.','group',60,'zoom',12],
+      ['parent-teacher','Parent / Teacher Meeting','Short one-on-one school meeting.','one_on_one',20,'meet',1],
+      ['property-viewing','Property Viewing','Schedule a property tour.','one_on_one',45,'custom',1],
+      ['vendor-intro','Vendor Introduction','Initial vendor qualification meeting.','one_on_one',30,'teams',1],
+      ['renewal-review','Renewal Review','Customer renewal and value review.','collective',45,'meet',1],
+      ['implementation-checkin','Implementation Check-in','Recurring implementation progress meeting.','collective',30,'meet',1],
+      ['community-group','Community Group Session','Book into a shared community session.','group',60,'zoom',25],
+      ['executive-briefing','Executive Briefing','Executive-level strategy briefing.','collective',60,'teams',1],
+    ];
+    $out=[]; foreach($items as $x){$out[]=['slug'=>$x[0],'title'=>$x[1],'summary'=>$x[2],'description'=>$x[2],'type'=>$x[3],'duration'=>$x[4],'location_type'=>$x[5],'capacity'=>$x[6],'buffer_before'=>0,'buffer_after'=>10,'settings'=>['price'=>0,'currency'=>'USD'],'availability'=>$weekday];} return $out;
+}
+function fplm_templates_catalog_api(){ $t=fplm_scheduling_templates(); return ['version'=>1,'templates'=>array_map(function($x){return ['slug'=>$x['slug'],'title'=>$x['title'],'summary'=>$x['summary'],'type'=>$x['type'],'duration'=>$x['duration'],'location_type'=>$x['location_type'],'capacity'=>$x['capacity']];},$t)]; }
+function fplm_template_item_api(WP_REST_Request $r){$slug=sanitize_title($r['slug']);foreach(fplm_scheduling_templates() as $x)if($x['slug']===$slug)return ['template'=>$x];return new WP_Error('not_found','Template not found.',['status'=>404]);}
+
+add_action('rest_api_init',function(){
+    register_rest_route('formpilot/v1','/license/status',['methods'=>'GET','permission_callback'=>'__return_true','callback'=>function(){return ['ok'=>true,'service'=>'FormPilot License Manager','version'=>FPLM_VERSION];}]);
+    register_rest_route('formpilot/v1','/license/activate',['methods'=>'POST','permission_callback'=>'fplm_api_guard','callback'=>'fplm_api_activate']);
+    register_rest_route('formpilot/v1','/license/validate',['methods'=>'POST','permission_callback'=>'fplm_api_guard','callback'=>'fplm_api_validate']);
+    register_rest_route('formpilot/v1','/license/deactivate',['methods'=>'POST','permission_callback'=>'fplm_api_guard','callback'=>'fplm_api_deactivate']);
+    register_rest_route('formpilot/v1','/store/checkout',['methods'=>'POST','permission_callback'=>'__return_true','callback'=>'fplm_api_checkout']);
+    register_rest_route('formpilot/v1','/stripe/webhook',['methods'=>'POST','permission_callback'=>'__return_true','callback'=>'fplm_stripe_webhook']);
+    register_rest_route('formpilot/v1','/account/billing',['methods'=>'POST','permission_callback'=>function(){return is_user_logged_in();},'callback'=>'fplm_api_billing']);
+    register_rest_route('formpilot/v1','/update/check',['methods'=>'POST','permission_callback'=>'fplm_api_guard','callback'=>'fplm_api_update_check']);
+    register_rest_route('formpilot/v1','/update/download',['methods'=>'GET','permission_callback'=>'__return_true','callback'=>'fplm_api_update_download']);
+    register_rest_route('formpilot/v1','/templates/catalog',['methods'=>'GET','permission_callback'=>'__return_true','callback'=>'fplm_templates_catalog_api']);
+    register_rest_route('formpilot/v1','/templates/item/(?P<slug>[A-Za-z0-9_-]+)',['methods'=>'GET','permission_callback'=>'__return_true','callback'=>'fplm_template_item_api']);
+});
+function fplm_api_activate(WP_REST_Request $r){
+    fplm_ensure_schema();
+    global $wpdb;
+    $key=sanitize_text_field($r->get_param('license_key')); $url=esc_url_raw($r->get_param('site_url')); $domain=fplm_domain($url);
+    if(!$key||!$url||!$domain)return fplm_response(false,['message'=>'License key and site URL are required.'],400);
+    $row=fplm_get_license($key); if(!$row)return fplm_response(false,['message'=>'Invalid license key.'],403);
+    if($row->status!=='active'||fplm_is_expired($row)){ $msg=$row->status!=='active'?'This license is '.$row->status.'.':'This license has expired.'; return fplm_response(false,array_merge(['message'=>$msg],fplm_license_payload($row,$domain)),403); }
+    $t=fplm_tables(); $existing=fplm_activation($row,$domain); $now=current_time('mysql');
+    $plugin_version=sanitize_text_field($r->get_param('plugin_version')); $wp_version=sanitize_text_field($r->get_param('wp_version'));
+    $record=['license_id'=>$row->id,'domain'=>$domain,'site_url'=>$url,'site_hash'=>hash('sha256',$url),'status'=>'active','plugin_version'=>$plugin_version,'wp_version'=>$wp_version,'activated_at'=>$now,'last_seen'=>$now];
+    $storage='database';
+    if(!$existing){
+        $count=fplm_activation_count($row->id);
+        if($count>=(int)$row->max_activations)return fplm_response(false,['message'=>'Activation limit reached for this license.','activation_count'=>$count,'max_activations'=>(int)$row->max_activations],403);
+        $table_exists=($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$t['activations']))===$t['activations']);
+        $inserted=false;
+        if($table_exists) $inserted=$wpdb->insert($t['activations'],$record);
+        if(false===$inserted){
+            $db_error=$wpdb->last_error ?: 'Database activation write failed.';
+            $fallback_saved=fplm_activation_fallback_set($row->id,$domain,$record);
+            if(!$fallback_saved)return fplm_response(false,['message'=>'License activation could not be recorded on the license server.','activation_error'=>$db_error,'activation_table'=>$t['activations'],'activation_table_exists'=>$table_exists,'fallback_storage'=>'failed'],500);
+            $storage='options-fallback';
+        }
+    } else {
+        $existing_id=isset($existing->id)?absint($existing->id):0;
+        $can_update_db=$existing_id && $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$t['activations']))===$t['activations'];
+        if($can_update_db && !fplm_table_has_column($t['activations'],'status')) $can_update_db=false;
+        if($can_update_db){
+            $updated=$wpdb->update($t['activations'],['status'=>'active','site_url'=>$url,'plugin_version'=>$plugin_version,'wp_version'=>$wp_version,'last_seen'=>$now],['id'=>$existing_id]);
+            if(false===$updated){
+                $db_error=$wpdb->last_error ?: 'Database activation refresh failed.';
+                $fallback_saved=fplm_activation_fallback_set($row->id,$domain,$record);
+                if(!$fallback_saved)return fplm_response(false,['message'=>'The existing domain activation could not be refreshed.','activation_error'=>$db_error,'activation_table'=>$t['activations'],'fallback_storage'=>'failed'],500);
+                $storage='options-fallback';
+            }
+        } else {
+            $fallback_saved=fplm_activation_fallback_set($row->id,$domain,$record);
+            if(!$fallback_saved)return fplm_response(false,['message'=>'The existing domain activation could not be refreshed.','activation_error'=>$wpdb->last_error ?: 'Activation storage is unavailable.','activation_table'=>$t['activations'],'fallback_storage'=>'failed'],500);
+            $storage='options-fallback';
+        }
+    }
+    $verified=fplm_activation($row,$domain);
+    if(!$verified || ($verified->status??'')!=='active'){
+        $fallback=fplm_activation_fallback_get($row->id,$domain);
+        if($fallback && (($fallback->status??'')==='active')){$verified=$fallback;$storage='options-fallback';}
+        else return fplm_response(false,['message'=>'The license server could not confirm the domain activation after saving it.','activation_error'=>$wpdb->last_error ?: 'Activation record was not found after save.'],500);
+    }
+    $wpdb->update($t['licenses'],['activations_count'=>fplm_activation_count($row->id),'updated_at'=>$now],['id'=>$row->id]);
+    $payload=fplm_license_payload($row,$domain); $payload['activation_verified']=true; $payload['activation_id']=(int)($verified->id??0); $payload['activation_storage']=$storage;
+    return fplm_response(true,$payload);
+}
+function fplm_api_validate(WP_REST_Request $r){
+    fplm_ensure_schema();
+    global $wpdb; $key=sanitize_text_field($r->get_param('license_key')); $url=esc_url_raw($r->get_param('site_url')); $domain=fplm_domain($url); $row=fplm_get_license($key);
+    if(!$row)return fplm_response(false,['message'=>'Invalid license key.'],403);
+    $error=fplm_validate_row_domain($row,$domain);
+    if($error){ $payload=fplm_license_payload($row,$domain); $payload['activation_verified']=false; $payload['activation_domain']=$domain; return fplm_response(false,array_merge(['message'=>$error],$payload),403); }
+    $act=fplm_activation($row,$domain); if(isset($act->id)&&$act->id && fplm_table_has_column(fplm_tables()['activations'],'status')){$wpdb->update(fplm_tables()['activations'],['last_seen'=>current_time('mysql'),'plugin_version'=>sanitize_text_field($r->get_param('plugin_version')),'wp_version'=>sanitize_text_field($r->get_param('wp_version'))],['id'=>$act->id]);}else{ $a=get_object_vars($act); $a['last_seen']=current_time('mysql'); $a['plugin_version']=sanitize_text_field($r->get_param('plugin_version')); $a['wp_version']=sanitize_text_field($r->get_param('wp_version')); fplm_activation_fallback_set($row->id,$domain,$a); }
+    $payload=fplm_license_payload($row,$domain); $payload['activation_verified']=true; $payload['activation_id']=(int)$act->id; return fplm_response(true,$payload);
+}
+function fplm_api_deactivate(WP_REST_Request $r){ fplm_ensure_schema(); global $wpdb; $key=sanitize_text_field($r->get_param('license_key')); $domain=fplm_domain($r->get_param('site_url')); $row=fplm_get_license($key); if(!$row)return fplm_response(false,['message'=>'Invalid license key.'],403); $t=fplm_tables(); $deleted=false; if($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$t['activations']))===$t['activations'])$deleted=$wpdb->delete($t['activations'],['license_id'=>$row->id,'domain'=>$domain]); $fallback=fplm_activation_fallback_delete($row->id,$domain); $wpdb->query($wpdb->prepare("UPDATE {$t['licenses']} SET activations_count=%d,updated_at=%s WHERE id=%d",fplm_activation_count($row->id),current_time('mysql'),$row->id)); return fplm_response(true,['message'=>'License deactivated for this domain.','database_deleted'=>(bool)$deleted,'fallback_deleted'=>(bool)$fallback]); }
+
+function fplm_stripe_secret(){ return trim((string)get_option('fplm_stripe_secret_key','')); }
+function fplm_stripe_api($method,$path,$body=[]){ $secret=fplm_stripe_secret(); if(!$secret)return new WP_Error('stripe_not_configured','Stripe secret key is not configured.'); $res=wp_remote_request('https://api.stripe.com/v1/'.ltrim($path,'/'),['method'=>$method,'timeout'=>30,'headers'=>['Authorization'=>'Bearer '.$secret,'Content-Type'=>'application/x-www-form-urlencoded'],'body'=>$body]); if(is_wp_error($res))return $res; $code=(int)wp_remote_retrieve_response_code($res); $data=json_decode(wp_remote_retrieve_body($res),true); if($code<200||$code>=300||!is_array($data))return new WP_Error('stripe_api_error',sanitize_text_field($data['error']['message']??'Stripe API request failed.'),['status'=>$code]); return $data; }
+function fplm_api_checkout(WP_REST_Request $r){ if(fplm_rate_limited())return new WP_Error('rate_limited','Please try again shortly.',['status'=>429]); $plans=fplm_plans(); $plan_key=sanitize_key($r->get_param('plan')); if(empty($plans[$plan_key]))return new WP_Error('invalid_plan','Invalid plan.',['status'=>400]); $p=$plans[$plan_key]; $email=sanitize_email($r->get_param('email')); $name=sanitize_text_field($r->get_param('name')); if(!$email||!is_email($email))return new WP_Error('invalid_email','Please enter a valid email address.',['status'=>400]); if(!fplm_stripe_secret())return new WP_Error('stripe_not_configured','Stripe payments are not configured yet.',['status'=>503]); global $wpdb; $t=fplm_tables(); $key=fplm_license_key(); $now=current_time('mysql'); $expires=$p['interval']==='annual'?gmdate('Y-m-d H:i:s',strtotime('+1 year')):($p['interval']==='monthly'?gmdate('Y-m-d H:i:s',strtotime('+1 month')):null); $wpdb->insert($t['licenses'],['license_hash'=>fplm_hash($key),'license_last4'=>substr($key,-4),'encrypted_key'=>fplm_encrypt($key),'customer_name'=>$name,'customer_email'=>$email,'plan'=>$plan_key,'status'=>'pending','max_activations'=>max(1,(int)$p['activations']),'expires_at'=>$expires,'features'=>wp_json_encode($p['features']),'amount'=>(float)$p['amount'],'currency'=>strtoupper($p['currency']),'billing_interval'=>$p['interval'],'created_at'=>$now,'updated_at'=>$now]); $license_id=(int)$wpdb->insert_id; $wpdb->insert($t['orders'],['license_id'=>$license_id,'email'=>$email,'plan'=>$plan_key,'amount'=>(float)$p['amount'],'currency'=>strtoupper($p['currency']),'status'=>'pending','created_at'=>$now]); $order_id=(int)$wpdb->insert_id; $body=['mode'=>in_array($p['interval'],['lifetime','one_time'],true)?'payment':'subscription','success_url'=>add_query_arg(['formpilot_checkout'=>'success','session_id'=>'{CHECKOUT_SESSION_ID}'],home_url('/')),'cancel_url'=>add_query_arg(['formpilot_checkout'=>'cancel'],home_url('/')),'customer_email'=>$email,'client_reference_id'=>'fplm_order_'.$order_id,'metadata[license_id]'=>$license_id,'metadata[order_id]'=>$order_id,'metadata[plan]'=>$plan_key,'line_items[0][quantity]'=>1,'line_items[0][price_data][currency]'=>strtolower($p['currency']),'line_items[0][price_data][unit_amount]'=>round(((float)$p['amount'])*100),'line_items[0][price_data][product_data][name]'=>$p['name'],'line_items[0][price_data][product_data][description]'=>$p['description']]; if(!in_array($p['interval'],['lifetime','one_time'],true))$body['line_items[0][price_data][recurring][interval]']=$p['interval']==='monthly'?'month':'year'; $session=fplm_stripe_api('POST','checkout/sessions',$body); if(is_wp_error($session)){ $wpdb->delete($t['orders'],['id'=>$order_id]); $wpdb->delete($t['licenses'],['id'=>$license_id]); return $session; } $wpdb->update($t['licenses'],['stripe_checkout_session_id'=>sanitize_text_field($session['id']??''),'updated_at'=>current_time('mysql')],['id'=>$license_id]); $wpdb->update($t['orders'],['stripe_session_id'=>sanitize_text_field($session['id']??'')],['id'=>$order_id]); return ['ok'=>true,'url'=>esc_url_raw($session['url']??''),'session_id'=>sanitize_text_field($session['id']??'')]; }
+function fplm_verify_stripe_signature($payload,$header){ $secret=trim((string)get_option('fplm_stripe_webhook_secret','')); if(!$secret)return false; $parts=[]; foreach(explode(',',$header) as $item){$kv=explode('=',$item,2);if(count($kv)===2)$parts[$kv[0]][]=$kv[1];} $timestamp=(int)($parts['t'][0]??0); if(!$timestamp||abs(time()-$timestamp)>300)return false; $expected=hash_hmac('sha256',$timestamp.'.'.$payload,$secret); foreach(($parts['v1']??[]) as $sig)if(hash_equals($expected,$sig))return true; return false; }
+function fplm_stripe_webhook(WP_REST_Request $r){ $payload=$r->get_body(); if(!fplm_verify_stripe_signature($payload,$r->get_header('stripe-signature')))return new WP_REST_Response(['error'=>'Invalid signature'],400); $event=json_decode($payload,true); if(!is_array($event))return new WP_REST_Response(['error'=>'Invalid JSON'],400); global $wpdb; $t=fplm_tables(); $eid=sanitize_text_field($event['id']??''); if($eid && $wpdb->get_var($wpdb->prepare("SELECT id FROM {$t['events']} WHERE event_id=%s",$eid)))return ['received'=>true,'duplicate'=>true]; if($eid)$wpdb->insert($t['events'],['event_id'=>$eid,'event_type'=>sanitize_text_field($event['type']??''),'received_at'=>current_time('mysql')]); $obj=$event['data']['object']??[]; switch($event['type']??''){case 'checkout.session.completed':fplm_handle_checkout_completed($obj);break;case 'invoice.paid':fplm_handle_invoice_paid($obj);break;case 'customer.subscription.deleted':fplm_handle_subscription_deleted($obj);break;} return ['received'=>true]; }
+function fplm_ensure_customer_user($name,$email){ $u=get_user_by('email',$email); if($u)return $u->ID; $login=sanitize_user(current(explode('@',$email)),true); if(!$login)$login='formpilot_customer'; $base=$login; $i=1; while(username_exists($login))$login=$base.$i++; $id=wp_create_user($login,wp_generate_password(32,true,true),$email); if(is_wp_error($id))return 0; wp_update_user(['ID'=>$id,'display_name'=>$name?:$email,'first_name'=>$name]); return $id; }
+function fplm_send_account_email($user_id,$license_key){ $u=get_userdata($user_id); if(!$u)return; $rp= get_password_reset_key($u); $link=!is_wp_error($rp)?network_site_url('wp-login.php?action=rp&key='.rawurlencode($rp).'&login='.rawurlencode($u->user_login),'login') : wp_login_url(); wp_mail($u->user_email,'Your FormPilot account and license','Your FormPilot purchase is ready.\n\nLicense key: '.$license_key.'\nAccount: '.home_url('/').'\nSet your password: '.$link.'\n\nKeep this license key private.'); }
+function fplm_handle_checkout_completed($s){ global $wpdb; $t=fplm_tables(); $lid=absint($s['metadata']['license_id']??0); $oid=absint($s['metadata']['order_id']??0); if(!$lid)return; $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE id=%d",$lid)); if(!$row)return; $uid=fplm_ensure_customer_user($row->customer_name,$row->customer_email); $sub=is_string($s['subscription']??null)?$s['subscription']:''; $wpdb->update($t['licenses'],['user_id'=>$uid,'status'=>'active','stripe_customer_id'=>sanitize_text_field($s['customer']??''),'stripe_subscription_id'=>sanitize_text_field($sub),'updated_at'=>current_time('mysql')],['id'=>$lid]); $wpdb->update($t['orders'],['user_id'=>$uid,'status'=>'paid','stripe_payment_intent_id'=>sanitize_text_field($s['payment_intent']??''),'stripe_subscription_id'=>$sub,'paid_at'=>current_time('mysql')],['id'=>$oid]); $key=fplm_decrypt($row->encrypted_key); if($uid && $key)fplm_send_account_email($uid,$key); }
+function fplm_handle_invoice_paid($invoice){ global $wpdb; $t=fplm_tables(); $sub=sanitize_text_field($invoice['subscription']??''); if(!$sub)return; $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE stripe_subscription_id=%s",$sub)); if(!$row)return; $period_end=absint($invoice['lines']['data'][0]['period']['end']??0); if(!$period_end){$subdata=fplm_stripe_api('GET','subscriptions/'.rawurlencode($sub));$period_end=absint($subdata['current_period_end']??0);}$expires=$period_end?gmdate('Y-m-d H:i:s',$period_end):$row->expires_at; $wpdb->update($t['licenses'],['status'=>'active','expires_at'=>$expires,'updated_at'=>current_time('mysql')],['id'=>$row->id]); }
+function fplm_handle_subscription_deleted($sub){ global $wpdb; $t=fplm_tables(); $id=sanitize_text_field($sub['id']??''); if(!$id)return; $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE stripe_subscription_id=%s",$id)); if($row)$wpdb->update($t['licenses'],['status'=>'suspended','expires_at'=>gmdate('Y-m-d H:i:s'),'updated_at'=>current_time('mysql')],['id'=>$row->id]); }
+
+function fplm_api_billing(WP_REST_Request $r){ $u=wp_get_current_user(); global $wpdb;$t=fplm_tables();$cid=$wpdb->get_var($wpdb->prepare("SELECT stripe_customer_id FROM {$t['licenses']} WHERE user_id=%d AND stripe_customer_id<>'' ORDER BY id DESC LIMIT 1",$u->ID)); if(!$cid)return new WP_Error('no_billing','No Stripe billing profile is available for this account.',['status'=>404]); $session=fplm_stripe_api('POST','billing_portal/sessions',['customer'=>$cid,'return_url'=>home_url('/')]); if(is_wp_error($session))return $session; return ['ok'=>true,'url'=>esc_url_raw($session['url']??'')]; }
+
+function fplm_latest_release(){ global $wpdb; $t=fplm_tables(); $rows=$wpdb->get_results("SELECT * FROM {$t['releases']} WHERE channel='stable'"); $latest=null; foreach($rows as $row){if(!$latest||version_compare($row->version,$latest->version,'>'))$latest=$row;} return $latest; }
+function fplm_api_update_check(WP_REST_Request $r){ $key=sanitize_text_field($r->get_param('license_key')); $domain=fplm_domain($r->get_param('site_url')); $row=fplm_get_license($key); $error=fplm_validate_row_domain($row,$domain); if($error)return fplm_response(false,['message'=>$error],403); $features=json_decode($row->features,true); if(empty($features['updates']))return fplm_response(false,['message'=>'Updates are not included in this license.'],403); $rel=fplm_latest_release(); if(!$rel)return fplm_response(true,['update'=>false,'message'=>'No release is published yet.']); $current=sanitize_text_field($r->get_param('plugin_version')); if(version_compare($rel->version,$current,'<='))return fplm_response(true,['update'=>false,'latest_version'=>$rel->version]); $token=wp_generate_password(48,false,false); set_transient('fplm_dl_'.hash('sha256',$token),['license_id'=>(int)$row->id,'domain'=>$domain,'release_id'=>(int)$rel->id,'expires'=>time()+900],15*MINUTE_IN_SECONDS); $manifest=['product'=>'formpilot-pro','version'=>$rel->version,'sha256'=>$rel->sha256,'min_wp'=>$rel->min_wp,'tested_wp'=>$rel->tested_wp,'requires_php'=>$rel->requires_php]; $msig=fplm_sign_entitlement($manifest); return fplm_response(true,['update'=>true,'manifest'=>$manifest,'manifest_signature'=>$msig,'signature_alg'=>'RSA-SHA256','package'=>add_query_arg(['token'=>$token],rest_url('formpilot/v1/update/download')),'changelog'=>wp_kses_post($rel->changelog)]); }
+function fplm_api_update_download(WP_REST_Request $r){ $token=preg_replace('/[^A-Za-z0-9]/','',(string)$r->get_param('token')); $v=get_transient('fplm_dl_'.hash('sha256',$token)); if(!is_array($v)||empty($v['expires'])||$v['expires']<time())return new WP_Error('download_expired','Download authorization expired.',['status'=>403]); global $wpdb; $t=fplm_tables(); $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE id=%d",absint($v['license_id']))); if(!$row)return new WP_Error('download_forbidden','This license is not authorized for this download.',['status'=>403]); if(($v['domain']??'')==='*'){if(!is_user_logged_in()||absint($v['user_id']??0)!==get_current_user_id()||absint($row->user_id)!==get_current_user_id())return new WP_Error('download_forbidden','Please sign in to download this release.',['status'=>403]);}elseif(fplm_validate_row_domain($row,sanitize_text_field($v['domain'])))return new WP_Error('download_forbidden','This license is not authorized for this download.',['status'=>403]); $rel=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['releases']} WHERE id=%d",absint($v['release_id']))); if(!$rel||!is_readable($rel->file_path))return new WP_Error('release_missing','Release file is unavailable.',['status'=>404]); delete_transient('fplm_dl_'.hash('sha256',$token)); nocache_headers(); header('Content-Type: application/zip'); header('Content-Length: '.filesize($rel->file_path)); header('Content-Disposition: attachment; filename="formpilot-pro-'.$rel->version.'.zip"'); readfile($rel->file_path); exit; }
+
+
+function fplm_maybe_create_pages(){ if(get_option('fplm_pages_created'))return; $pages=[['title'=>'FormPilot Pricing','content'=>'[formpilot_pricing]','option'=>'fplm_store_page_url'],['title'=>'FormPilot Account','content'=>'[formpilot_account]','option'=>'fplm_account_page_id'],['title'=>'FormPilot Downloads','content'=>'[formpilot_downloads]','option'=>'fplm_downloads_page_id']]; foreach($pages as $p){$id=wp_insert_post(['post_title'=>$p['title'],'post_content'=>$p['content'],'post_status'=>'publish','post_type'=>'page'],true); if(!is_wp_error($id)&&$id){if($p['option']==='fplm_store_page_url')update_option($p['option'],get_permalink($id),false);else update_option($p['option'],$id,false);}} update_option('fplm_pages_created','1',false);}
+add_action('init','fplm_maybe_create_pages',20);
+add_action('admin_menu',function(){ add_menu_page('FormPilot Licensing','FormPilot','manage_options','fplm-dashboard','fplm_dashboard_page','dashicons-admin-network',58); add_submenu_page('fplm-dashboard','Dashboard','Dashboard','manage_options','fplm-dashboard','fplm_dashboard_page'); add_submenu_page('fplm-dashboard','Orders','Orders','manage_options','fplm-orders','fplm_orders_page'); add_submenu_page('fplm-dashboard','Licenses','Licenses','manage_options','fplm-licenses','fplm_licenses_page'); add_submenu_page('fplm-dashboard','Activations','Activations','manage_options','fplm-activations','fplm_activations_page'); add_submenu_page('fplm-dashboard','Releases','Releases','manage_options','fplm-releases','fplm_releases_page'); add_submenu_page('fplm-dashboard','Settings','Settings','manage_options','fplm-settings','fplm_settings_page'); });
+add_action('wp_ajax_fplm_admin_fragment','fplm_admin_fragment');
+function fplm_admin_fragment(){
+    if(!current_user_can('manage_options')) wp_send_json_error(['message'=>'Unauthorized.'],403);
+    check_ajax_referer('fplm_admin_ui','nonce');
+    fplm_ensure_schema();
+    $map=['fplm-dashboard'=>'fplm_dashboard_page','fplm-orders'=>'fplm_orders_page','fplm-licenses'=>'fplm_licenses_page','fplm-activations'=>'fplm_activations_page','fplm-releases'=>'fplm_releases_page','fplm-settings'=>'fplm_settings_page'];
+    $page=sanitize_key($_POST['page']??'');
+    if(empty($map[$page])) wp_send_json_error(['message'=>'Invalid admin page.'],400);
+    $_GET['page']=$page;
+    ob_start(); call_user_func($map[$page]); $html=ob_get_clean();
+    wp_send_json_success(['html'=>$html,'page'=>$page]);
+}
+add_action('admin_enqueue_scripts',function($hook){
+    $page=sanitize_key($_GET['page']??'');
+    if(strpos($page,'fplm-')!==0) return;
+    wp_enqueue_script('jquery');
+    $js=<<<'JS'
+(function($){
+function fplmLoad(page,url,replace){
+ var data={action:'fplm_admin_fragment',page:page,nonce:'__NONCE__'},$root=$('#fplm-admin-content');
+ if(!$root.length)return false;
+ $root.addClass('fplm-loading');
+ $.post(ajaxurl,data).done(function(r){
+  if(!r.success||!r.data||!r.data.html){window.location.href=url;return;}
+  var doc=new DOMParser().parseFromString(r.data.html,'text/html'),incoming=doc.querySelector('#fplm-admin-content');
+  if(!incoming){window.location.href=url;return;}
+  $root.replaceWith(incoming);
+  $(document).trigger('fplm:page-loaded');
+  if(replace!==false)history.pushState({fplm:true},'',url);
+ }).fail(function(){window.location.href=url;}).always(function(){$('#fplm-admin-content').removeClass('fplm-loading');});
+ return true;
+}
+$(document).on('click','.fplm-tab',function(e){e.preventDefault();var a=$(this),page=a.data('fplm-page'),url=a.attr('href');fplmLoad(page,url,true);});
+window.addEventListener('popstate',function(){var page=new URLSearchParams(location.search).get('page')||'fplm-dashboard';if(page.indexOf('fplm-')===0)fplmLoad(page,location.href,false);});
+var fplmRefreshTimer=null;function startActivationRefresh(){if(fplmRefreshTimer)clearInterval(fplmRefreshTimer);if(new URLSearchParams(location.search).get('page')==='fplm-activations'){fplmRefreshTimer=setInterval(function(){if(!document.hidden)fplmLoad('fplm-activations',location.href,false);},15000);}}
+if(new URLSearchParams(location.search).get('page')==='fplm-activations')startActivationRefresh();
+$(document).on('fplm:page-loaded',startActivationRefresh);
+})(jQuery);
+JS;
+    $js=str_replace('__NONCE__',esc_js(wp_create_nonce('fplm_admin_ui')),$js);
+    wp_add_inline_script('jquery',$js);
+    wp_register_style('fplm-inline-ui',false);wp_enqueue_style('fplm-inline-ui');
+    wp_add_inline_style('fplm-inline-ui','.fplm-admin-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 18px;border-bottom:1px solid #dcdcde}.fplm-admin-tabs .fplm-tab{display:inline-block;padding:9px 14px;text-decoration:none;border:1px solid transparent;border-bottom:0;border-radius:8px 8px 0 0;color:#475569;font-weight:600}.fplm-admin-tabs .fplm-tab:hover{background:#f8fafc;color:#111827}.fplm-admin-tabs .fplm-tab.is-active{background:#fff;border-color:#dcdcde;color:#4338ca}.fplm-loading{opacity:.55;transition:opacity .15s}');
+});
+function fplm_admin_header($title){
+    $current=sanitize_key($_GET['page']??'fplm-dashboard');
+    $tabs=['fplm-dashboard'=>'Dashboard','fplm-orders'=>'Orders','fplm-licenses'=>'Licenses','fplm-activations'=>'Activations','fplm-releases'=>'Releases','fplm-settings'=>'Settings'];
+    echo '<div class="wrap" id="fplm-admin-content"><h1>'.esc_html($title).'</h1><nav class="fplm-admin-tabs" aria-label="FormPilot License Manager">';
+    foreach($tabs as $slug=>$label){$cls=$current===$slug?'is-active':'';echo '<a class="fplm-tab '.esc_attr($cls).'" data-fplm-page="'.esc_attr($slug).'" href="'.esc_url(admin_url('admin.php?page='.$slug)).'">'.esc_html($label).'</a>';}
+    echo '</nav>';
+}
+function fplm_dashboard_page(){ global $wpdb;$t=fplm_tables();$counts=['licenses'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$t['licenses']}"),'active'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$t['licenses']} WHERE status='active'"),'orders'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$t['orders']} WHERE status='paid'"),'activations'=>(int)$wpdb->get_var("SELECT COUNT(*) FROM {$t['activations']}")];fplm_admin_header('FormPilot Commercial Dashboard');echo '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px">';foreach($counts as $k=>$v)echo '<div class="postbox" style="padding:20px"><strong style="text-transform:uppercase;font-size:11px">'.esc_html($k).'</strong><div style="font-size:30px;font-weight:700;margin-top:8px">'.(int)$v.'</div></div>';echo '</div><div class="postbox" style="padding:20px;max-width:1000px"><h2>Customer pages</h2><p>Use <code>[formpilot_pricing]</code> for the store and <code>[formpilot_account]</code> for the customer portal. The client plugin uses this server for activation and gated updates.</p><p><strong>Update endpoint:</strong> <code>'.esc_html(rest_url('formpilot/v1/update/check')).'</code></p></div></div>';}
+function fplm_orders_page(){global $wpdb;$t=fplm_tables();$rows=$wpdb->get_results("SELECT * FROM {$t['orders']} ORDER BY id DESC LIMIT 200");fplm_admin_header('Orders');echo '<table class="widefat striped"><thead><tr><th>ID</th><th>Email</th><th>Plan</th><th>Amount</th><th>Status</th><th>Created</th></tr></thead><tbody>';foreach($rows as $r)echo '<tr><td>'.(int)$r->id.'</td><td>'.esc_html($r->email).'</td><td>'.esc_html($r->plan).'</td><td>'.esc_html($r->currency.' '.number_format((float)$r->amount,2)).'</td><td>'.esc_html($r->status).'</td><td>'.esc_html($r->created_at).'</td></tr>';echo '</tbody></table></div>';}
+function fplm_licenses_page(){
+    if(!current_user_can('manage_options'))return;
+    global $wpdb;$t=fplm_tables();$shown_key='';
+    if(isset($_POST['fplm_action'])&&check_admin_referer('fplm_admin')){
+        $action=sanitize_key($_POST['fplm_action']);
+        if($action==='status'){
+            $lid=absint($_POST['license_id']??0);$new_status=sanitize_key($_POST['status']??'active');
+            if(!in_array($new_status,['active','suspended','revoked'],true))$new_status='active';
+            $now=current_time('mysql');
+            $wpdb->update($t['licenses'],['status'=>$new_status,'updated_at'=>$now],['id'=>$lid]);
+            $activation_status=$new_status==='active'?'active':'suspended';
+            $wpdb->query($wpdb->prepare("UPDATE {$t['activations']} SET status=%s WHERE license_id=%d",$activation_status,$lid));
+            echo '<div class="notice notice-success"><p>License status updated to <strong>'.esc_html($new_status).'</strong>. All current activations are now <strong>'.esc_html($activation_status).'</strong>.</p></div>';
+        }elseif($action==='show'){
+            $lid=absint($_POST['license_id']??0);$row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE id=%d",$lid));
+            if($row){$shown_key=fplm_decrypt($row->encrypted_key);if(!$shown_key)echo '<div class="notice notice-error"><p>The stored license key could not be decrypted.</p></div>';}
+        }elseif($action==='delete'){
+            $lid=absint($_POST['license_id']??0);$row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE id=%d",$lid));
+            if($row){
+                $wpdb->delete($t['activations'],['license_id'=>$lid]);
+                $wpdb->delete($t['orders'],['license_id'=>$lid]);
+                $wpdb->delete($t['licenses'],['id'=>$lid]);
+                echo '<div class="notice notice-success"><p>License and its activation records were permanently deleted.</p></div>';
+            }
+        }elseif($action==='create'){
+            $p=fplm_plans();$plan=sanitize_key($_POST['plan']??'premium');$x=$p[$plan]??$p['premium'];$key=fplm_license_key();
+            $exp=!empty($_POST['expires_at'])?sanitize_text_field($_POST['expires_at']):($x['interval']==='annual'?gmdate('Y-m-d H:i:s',strtotime('+1 year')):null);
+            $wpdb->insert($t['licenses'],['license_hash'=>fplm_hash($key),'license_last4'=>substr($key,-4),'encrypted_key'=>fplm_encrypt($key),'customer_name'=>sanitize_text_field($_POST['name']??''),'customer_email'=>sanitize_email($_POST['email']??''),'plan'=>$plan,'status'=>'active','max_activations'=>(int)$x['activations'],'expires_at'=>$exp,'features'=>wp_json_encode($x['features']),'amount'=>(float)$x['amount'],'currency'=>strtoupper($x['currency']),'billing_interval'=>$x['interval'],'created_at'=>current_time('mysql'),'updated_at'=>current_time('mysql')]);
+            if($wpdb->insert_id)echo '<div class="notice notice-success"><p>License created: <code>'.esc_html($key).'</code></p></div>';
+        }
+    }
+    $rows=$wpdb->get_results("SELECT * FROM {$t['licenses']} ORDER BY id DESC LIMIT 200");
+    fplm_admin_header('Licenses');
+    if($shown_key!=='')echo '<div class="notice notice-info"><p><strong>License key:</strong> <code style="font-size:14px">'.esc_html($shown_key).'</code></p><p>Keep this key private. It is displayed only to administrators with permission to manage licenses.</p></div>';
+    echo '<div class="postbox" style="padding:20px;max-width:700px"><h2>Create manual license</h2><form method="post">'.wp_nonce_field('fplm_admin','_wpnonce',true,false).'<input type="hidden" name="fplm_action" value="create"><p><input class="regular-text" name="name" placeholder="Customer name"></p><p><input class="regular-text" type="email" name="email" placeholder="Customer email"></p><p><select name="plan">';
+    foreach(fplm_plans() as $k=>$p)echo '<option value="'.esc_attr($k).'">'.esc_html($p['name']).'</option>';
+    echo '</select></p><p><button class="button button-primary">Create License</button></p></form></div>';
+    echo '<table class="widefat striped"><thead><tr><th>Customer</th><th>Key</th><th>Plan</th><th>Status</th><th>Sites</th><th>Expires</th><th>License</th><th>Status</th></tr></thead><tbody>';
+    foreach($rows as $r){
+        echo '<tr><td>'.esc_html($r->customer_name?:$r->customer_email).'<br><small>'.esc_html($r->customer_email).'</small></td><td><code>••••-'.esc_html($r->license_last4).'</code></td><td>'.esc_html($r->plan).'</td><td>'.esc_html($r->status).'</td><td>'.(int)$r->activations_count.'/'.(int)$r->max_activations.'</td><td>'.($r->expires_at?esc_html($r->expires_at):'Never').'</td><td style="white-space:nowrap">';
+        echo '<form method="post" style="display:inline-block;margin-right:5px">'.wp_nonce_field('fplm_admin','_wpnonce',true,false).'<input type="hidden" name="fplm_action" value="show"><input type="hidden" name="license_id" value="'.(int)$r->id.'"><button class="button">Show License</button></form>';
+        echo '<form method="post" style="display:inline-block" onsubmit="return confirm(\'Permanently delete this license, its activations, and its linked order records? This cannot be undone.\');">'.wp_nonce_field('fplm_admin','_wpnonce',true,false).'<input type="hidden" name="fplm_action" value="delete"><input type="hidden" name="license_id" value="'.(int)$r->id.'"><button class="button button-link-delete">Delete License</button></form></td><td><form method="post">'.wp_nonce_field('fplm_admin','_wpnonce',true,false).'<input type="hidden" name="fplm_action" value="status"><input type="hidden" name="license_id" value="'.(int)$r->id.'"><select name="status"><option value="active" '.selected($r->status,'active',false).'>Active</option><option value="suspended" '.selected($r->status,'suspended',false).'>Suspend</option><option value="revoked" '.selected($r->status,'revoked',false).'>Revoke</option></select> <button class="button">Save</button></form></td></tr>';
+    }
+    echo '</tbody></table></div>';
+}
+
+function fplm_activations_page(){
+    global $wpdb;$t=fplm_tables();
+    $rows=$wpdb->get_results("SELECT a.*,l.plan,l.customer_email FROM {$t['activations']} a LEFT JOIN {$t['licenses']} l ON l.id=a.license_id ORDER BY a.last_seen DESC LIMIT 300");
+    $seen=[]; foreach((array)$rows as $r){$seen[(int)$r->license_id.'|'.strtolower((string)$r->domain)]=true;}
+    $fallbacks=$wpdb->get_results($wpdb->prepare("SELECT option_name,option_value FROM {$wpdb->options} WHERE option_name LIKE %s",'fplm_activation_fallback_%'));
+    foreach((array)$fallbacks as $o){$v=maybe_unserialize($o->option_value); if(!is_array($v))continue; $key=absint($v['license_id']??0).'|'.strtolower((string)($v['domain']??'')); if(isset($seen[$key]))continue; $lic=$wpdb->get_row($wpdb->prepare("SELECT plan,customer_email FROM {$t['licenses']} WHERE id=%d",absint($v['license_id']??0))); if(!$lic)continue; $r=(object)$v; $r->plan=$lic->plan; $r->customer_email=$lic->customer_email; $r->storage='options-fallback'; $rows[]=$r; }
+    usort($rows,function($a,$b){return strcmp((string)($b->last_seen??''),(string)($a->last_seen??''));});
+    fplm_admin_header('Activations');echo '<p class="description">This list includes database activations and durable WordPress-option fallback activations.</p><table class="widefat striped"><thead><tr><th>Domain</th><th>Customer</th><th>Plan</th><th>Plugin</th><th>WordPress</th><th>Status</th><th>Storage</th><th>Last seen</th></tr></thead><tbody>';
+    foreach($rows as $r)echo '<tr><td>'.esc_html($r->domain).'</td><td>'.esc_html($r->customer_email??'').'</td><td>'.esc_html($r->plan??'').'</td><td>'.esc_html($r->plugin_version??'').'</td><td>'.esc_html($r->wp_version??'').'</td><td>'.esc_html($r->status??'active').'</td><td>'.esc_html($r->storage??'database').'</td><td>'.esc_html($r->last_seen??'').'</td></tr>';
+    if(!$rows)echo '<tr><td colspan="8">No activated websites yet.</td></tr>'; echo '</tbody></table></div>';
+}
+function fplm_releases_page(){global $wpdb;$t=fplm_tables();if(isset($_POST['fplm_release_upload'])&&check_admin_referer('fplm_release')){require_once ABSPATH.'wp-admin/includes/file.php';$version=sanitize_text_field($_POST['version']??'');if(!empty($_FILES['zip']['name'])){$u=wp_handle_upload($_FILES['zip'],['test_form'=>false,'mimes'=>['zip'=>'application/zip']]);if(empty($u['error'])&&preg_match('/^\\d+\\.\\d+(?:\\.\\d+){0,2}(?:-[A-Za-z0-9.-]+)?$/',$version)){ $path=wp_normalize_path($u['file']??'');$wpdb->insert($t['releases'],['version'=>$version,'channel'=>'stable','title'=>sanitize_text_field($_POST['title']??''),'changelog'=>wp_kses_post($_POST['changelog']??''),'file_path'=>$path,'file_size'=>file_exists($path)?filesize($path):0,'sha256'=>file_exists($path)?hash_file('sha256',$path):'','min_wp'=>sanitize_text_field($_POST['min_wp']??'5.8'),'tested_wp'=>sanitize_text_field($_POST['tested_wp']??''),'requires_php'=>sanitize_text_field($_POST['requires_php']??'7.4'),'created_at'=>current_time('mysql')]);echo '<div class="notice notice-success"><p>Release published.</p></div>'; }else echo '<div class="notice notice-error"><p>Upload failed or version is invalid.</p></div>';}}$rows=$wpdb->get_results("SELECT * FROM {$t['releases']} ORDER BY id DESC");fplm_admin_header('Plugin Releases');echo '<div class="postbox" style="padding:20px;max-width:760px"><form method="post" enctype="multipart/form-data">'.wp_nonce_field('fplm_release','_wpnonce',true,false).'<input type="hidden" name="fplm_release_upload" value="1"><p><input name="version" placeholder="8.0.0" required> <input name="title" placeholder="Release title"></p><p><input type="file" name="zip" accept=".zip" required></p><p><textarea name="changelog" rows="6" class="large-text" placeholder="Changelog"></textarea></p><p><input name="min_wp" value="5.8" placeholder="Minimum WordPress"> <input name="tested_wp" placeholder="Tested WordPress"> <input name="requires_php" value="7.4" placeholder="Requires PHP"></p><p><button class="button button-primary">Publish Release</button></p></form></div><table class="widefat striped"><thead><tr><th>Version</th><th>Title</th><th>Size</th><th>SHA-256</th><th>Created</th></tr></thead><tbody>';foreach($rows as $r)echo '<tr><td><strong>'.esc_html($r->version).'</strong></td><td>'.esc_html($r->title).'</td><td>'.size_format((int)$r->file_size).'</td><td><code>'.esc_html($r->sha256).'</code></td><td>'.esc_html($r->created_at).'</td></tr>';echo '</tbody></table></div>';}
+function fplm_save_settings(){if(!current_user_can('manage_options')||!check_admin_referer('fplm_settings'))wp_die('Unauthorized');$plans=fplm_plans();foreach($plans as $k=>$p){$plans[$k]['name']=sanitize_text_field($_POST['plan_'.$k.'_name']??$p['name']);$plans[$k]['description']=sanitize_text_field($_POST['plan_'.$k.'_description']??$p['description']);$plans[$k]['amount']=max(0,(float)($_POST['plan_'.$k.'_amount']??$p['amount']));$plans[$k]['currency']=strtoupper(sanitize_text_field($_POST['plan_'.$k.'_currency']??$p['currency']));$plans[$k]['interval']=in_array($_POST['plan_'.$k.'_interval']??$p['interval'],['monthly','annual','lifetime'],true)?$_POST['plan_'.$k.'_interval']:$p['interval'];$plans[$k]['activations']=max(1,absint($_POST['plan_'.$k.'_activations']??$p['activations']));}update_option('fplm_plans',$plans,false);update_option('fplm_stripe_secret_key',trim(sanitize_text_field($_POST['fplm_stripe_secret_key']??'')),false);update_option('fplm_stripe_webhook_secret',trim(sanitize_text_field($_POST['fplm_stripe_webhook_secret']??'')),false);update_option('fplm_store_page_url',esc_url_raw($_POST['fplm_store_page_url']??''),false);wp_safe_redirect(admin_url('admin.php?page=fplm-settings&saved=1'));exit;}
+function fplm_settings_page(){$plans=fplm_plans();if(isset($_POST['fplm_save_settings']))fplm_save_settings();fplm_admin_header('Commercial Settings');if(isset($_GET['saved']))echo '<div class="notice notice-success"><p>Settings saved.</p></div>';echo '<form method="post">'.wp_nonce_field('fplm_settings','_wpnonce',true,false).'<input type="hidden" name="fplm_save_settings" value="1"><h2>Stripe</h2><table class="form-table"><tr><th>Secret key</th><td><input class="regular-text" type="password" name="fplm_stripe_secret_key" value="'.esc_attr(get_option('fplm_stripe_secret_key','')).'" autocomplete="off"></td></tr><tr><th>Webhook secret</th><td><input class="regular-text" type="password" name="fplm_stripe_webhook_secret" value="'.esc_attr(get_option('fplm_stripe_webhook_secret','')).'" autocomplete="off"><p class="description">Webhook: <code>'.esc_html(rest_url('formpilot/v1/stripe/webhook')).'</code></p></td></tr><tr><th>Store page URL</th><td><input class="regular-text" type="url" name="fplm_store_page_url" value="'.esc_attr(get_option('fplm_store_page_url','')).'"></td></tr></table><h2>Plans</h2><table class="widefat striped"><thead><tr><th>Plan</th><th>Name</th><th>Price</th><th>Currency</th><th>Billing</th><th>Sites</th></tr></thead><tbody>';foreach($plans as $k=>$p)echo '<tr><td><strong>'.esc_html($k).'</strong></td><td><input class="regular-text" name="plan_'.esc_attr($k).'_name" value="'.esc_attr($p['name']).'"><br><input class="regular-text" name="plan_'.esc_attr($k).'_description" value="'.esc_attr($p['description']).'"></td><td><input type="number" step="0.01" min="0" name="plan_'.esc_attr($k).'_amount" value="'.esc_attr($p['amount']).'"></td><td><input class="small-text" maxlength="3" name="plan_'.esc_attr($k).'_currency" value="'.esc_attr($p['currency']).'"></td><td><select name="plan_'.esc_attr($k).'_interval"><option value="monthly" '.selected($p['interval'],'monthly',false).'>Monthly</option><option value="annual" '.selected($p['interval'],'annual',false).'>Annual</option><option value="lifetime" '.selected($p['interval'],'lifetime',false).'>Lifetime</option></select></td><td><input type="number" min="1" name="plan_'.esc_attr($k).'_activations" value="'.esc_attr($p['activations']).'"></td></tr>';echo '</tbody></table><p><button class="button button-primary button-large">Save Settings</button></p></form></div>';}
+
+add_shortcode('formpilot_pricing','fplm_pricing_shortcode');
+function fplm_pricing_shortcode(){ $plans=fplm_plans();ob_start();?><div class="fplm-store"><div class="fplm-store-grid"><?php foreach($plans as $key=>$p):?><article class="fplm-plan"><div class="fplm-plan-top"><h3><?php echo esc_html($p['name']);?></h3><span><?php echo esc_html(ucfirst($p['interval']));?></span></div><div class="fplm-price"><?php echo esc_html(strtoupper($p['currency']));?> <?php echo esc_html(number_format((float)$p['amount'],2));?><?php if($p['interval']!=='lifetime'):?><small>/<?php echo esc_html($p['interval']==='monthly'?'month':'year');?></small><?php endif;?></div><p><?php echo esc_html($p['description']);?></p><ul><li><?php echo (int)$p['activations'];?> website activation<?php echo (int)$p['activations']===1?'':'s';?></li><li>Form Builder</li><li>Stripe & Payment Links</li><li>Premium updates</li></ul><button type="button" class="fplm-buy" data-plan="<?php echo esc_attr($key);?>">Get <?php echo esc_html($p['name']);?></button></article><?php endforeach;?></div><div class="fplm-checkout" hidden><form><label>Name<input name="name" required></label><label>Email<input name="email" type="email" required></label><input type="hidden" name="plan"><button type="submit">Continue to secure Stripe checkout</button><button type="button" class="fplm-cancel">Cancel</button><div class="fplm-checkout-msg"></div></form></div></div><style>.fplm-store{max-width:1100px;margin:20px auto}.fplm-store-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.fplm-plan{border:1px solid #e2e8f0;border-radius:18px;padding:26px;background:#fff;box-shadow:0 10px 30px rgba(15,23,42,.06)}.fplm-plan-top{display:flex;justify-content:space-between}.fplm-plan h3{margin:0;font-size:22px}.fplm-plan-top span{font-size:11px;padding:5px 8px;border-radius:999px;background:#eef2ff}.fplm-price{font-size:30px;font-weight:800;margin:20px 0 8px}.fplm-price small{font-size:13px;color:#64748b}.fplm-plan ul{padding-left:18px;line-height:1.9;color:#475569}.fplm-buy,.fplm-checkout button{border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer;background:#111827;color:#fff}.fplm-checkout{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}.fplm-checkout[hidden]{display:none}.fplm-checkout form{background:#fff;padding:26px;border-radius:16px;max-width:420px;width:100%}.fplm-checkout label{display:block;font-size:13px;font-weight:700;margin-bottom:12px}.fplm-checkout input{display:block;width:100%;box-sizing:border-box;margin-top:5px;padding:11px;border:1px solid #dbe1ea;border-radius:8px}.fplm-cancel{background:#e5e7eb!important;color:#111827!important;margin-left:7px}.fplm-checkout-msg{margin-top:10px;font-size:13px}@media(max-width:800px){.fplm-store-grid{grid-template-columns:1fr}}</style><script>document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.fplm-buy').forEach(function(b){b.addEventListener('click',function(){var x=document.querySelector('.fplm-checkout');x.hidden=false;x.querySelector('[name=plan]').value=b.dataset.plan;});});var c=document.querySelector('.fplm-cancel');if(c)c.onclick=function(){document.querySelector('.fplm-checkout').hidden=true};var f=document.querySelector('.fplm-checkout form');if(f)f.onsubmit=function(e){e.preventDefault();var m=f.querySelector('.fplm-checkout-msg');m.textContent='Creating secure checkout…';fetch('<?php echo esc_url(rest_url('formpilot/v1/store/checkout'));?>',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:f.querySelector('[name=plan]').value,name:f.querySelector('[name=name]').value,email:f.querySelector('[name=email]').value})}).then(function(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.message||x.code||'Checkout failed');return x})}).then(function(x){if(!x.url)throw new Error('Stripe did not return a checkout URL.');location.href=x.url}).catch(function(e){m.textContent=e.message});};});</script><?php return ob_get_clean();}
+
+
+add_shortcode('formpilot_downloads','fplm_downloads_shortcode');
+function fplm_downloads_shortcode(){ if(!is_user_logged_in())return '<div class="fplm-account"><p>Please log in to download FormPilot Pro.</p><p><a href="'.esc_url(wp_login_url(get_permalink())).'">Log in</a></p></div>'; global $wpdb;$u=wp_get_current_user();$t=fplm_tables();$rels=$wpdb->get_results("SELECT * FROM {$t['releases']} ORDER BY id DESC");$licenses=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE user_id=%d AND status='active'",$u->ID));ob_start();?><div class="fplm-account"><h2>FormPilot Downloads</h2><?php if(!$licenses):?><p>No active license is attached to this account.</p><?php else: foreach($rels as $rel):?><article style="border:1px solid #e5e7eb;padding:18px;border-radius:12px;margin:12px 0"><h3>FormPilot Pro <?php echo esc_html($rel->version);?></h3><p><?php echo esc_html($rel->title);?> · <?php echo esc_html(size_format((int)$rel->file_size));?></p><p><?php echo wp_kses_post($rel->changelog);?></p><?php foreach($licenses as $l): $token=wp_generate_password(48,false,false);set_transient('fplm_dl_'.hash('sha256',$token),['license_id'=>(int)$l->id,'domain'=>'*','user_id'=>get_current_user_id(),'release_id'=>(int)$rel->id,'expires'=>time()+600],10*MINUTE_IN_SECONDS);?><a class="button" href="<?php echo esc_url(add_query_arg(['token'=>$token,'account'=>1],rest_url('formpilot/v1/update/download')));?>">Download for <?php echo esc_html($l->plan);?></a> <?php endforeach;?></article><?php endforeach; endif;?></div><?php return ob_get_clean();}
+
+add_shortcode('formpilot_account','fplm_account_shortcode');
+function fplm_account_shortcode(){
+ if(!is_user_logged_in())return '<div class="fplm-account"><p>Please log in to view your FormPilot account.</p><p><a href="'.esc_url(wp_login_url(get_permalink())).'">Log in</a></p></div>';
+ global $wpdb;$u=wp_get_current_user();$t=fplm_tables();
+ $licenses=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$t['licenses']} WHERE user_id=%d ORDER BY id DESC",$u->ID));
+ $acts=$wpdb->get_results($wpdb->prepare("SELECT a.*,l.plan FROM {$t['activations']} a JOIN {$t['licenses']} l ON l.id=a.license_id WHERE l.user_id=%d ORDER BY a.last_seen DESC",$u->ID));
+ $orders=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$t['orders']} WHERE user_id=%d ORDER BY id DESC",$u->ID));
+ ob_start();?><div class="fplm-account"><h2>FormPilot Account</h2><p>Signed in as <strong><?php echo esc_html($u->user_email);?></strong> · <a href="<?php echo esc_url(wp_logout_url(get_permalink()));?>">Log out</a></p>
+ <h3>Licenses</h3><table><thead><tr><th>Plan</th><th>Status</th><th>Expires</th><th>Sites</th><th>License key</th></tr></thead><tbody><?php foreach($licenses as $l):?><tr><td><?php echo esc_html($l->plan);?></td><td><?php echo esc_html($l->status);?></td><td><?php echo $l->expires_at?esc_html($l->expires_at):'Never';?></td><td><?php echo (int)$l->activations_count;?> / <?php echo (int)$l->max_activations;?></td><td><code><?php echo esc_html(fplm_decrypt($l->encrypted_key) ?: '••••-'.$l->license_last4);?></code></td></tr><?php endforeach;if(!$licenses):?><tr><td colspan="5">No licenses yet.</td></tr><?php endif;?></tbody></table>
+ <h3>Orders</h3><table><thead><tr><th>Order</th><th>Plan</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody><?php foreach($orders as $o):?><tr><td>#<?php echo (int)$o->id;?></td><td><?php echo esc_html($o->plan);?></td><td><?php echo esc_html($o->currency.' '.number_format((float)$o->amount,2));?></td><td><?php echo esc_html($o->status);?></td><td><?php echo esc_html($o->created_at);?></td></tr><?php endforeach;if(!$orders):?><tr><td colspan="5">No orders yet.</td></tr><?php endif;?></tbody></table>
+ <h3>Billing</h3><p><button type="button" id="fplm-billing-button" class="button">Manage Stripe Billing</button> <span id="fplm-billing-msg"></span></p>
+ <h3>Websites</h3><table><thead><tr><th>Domain</th><th>Plan</th><th>Plugin</th><th>WordPress</th><th>Last seen</th></tr></thead><tbody><?php foreach($acts as $a):?><tr><td><?php echo esc_html($a->domain);?></td><td><?php echo esc_html($a->plan);?></td><td><?php echo esc_html($a->plugin_version);?></td><td><?php echo esc_html($a->wp_version);?></td><td><?php echo esc_html($a->last_seen);?></td></tr><?php endforeach;if(!$acts):?><tr><td colspan="5">No activated websites yet.</td></tr><?php endif;?></tbody></table>
+ <p><a href="<?php echo esc_url(get_permalink((int)get_option('fplm_downloads_page_id')));?>">Go to Downloads</a></p>
+ <script>document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('fplm-billing-button');if(!b)return;b.addEventListener('click',function(){var m=document.getElementById('fplm-billing-msg');m.textContent='Opening billing…';fetch('<?php echo esc_url(rest_url('formpilot/v1/account/billing'));?>',{method:'POST',headers:{'X-WP-Nonce':'<?php echo esc_js(wp_create_nonce('wp_rest'));?>'}}).then(function(r){return r.json().then(function(x){if(!r.ok)throw new Error(x.message||'Billing unavailable');return x})}).then(function(x){location.href=x.url}).catch(function(e){m.textContent=e.message});});});</script>
+ </div><style>.fplm-account{max-width:1050px;margin:30px auto}.fplm-account table{width:100%;border-collapse:collapse;margin:12px 0 28px}.fplm-account th,.fplm-account td{border:1px solid #e5e7eb;padding:10px;text-align:left}.fplm-account th{background:#f8fafc}</style><?php return ob_get_clean();}

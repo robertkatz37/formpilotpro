@@ -1,0 +1,6 @@
+FormPilot Pro 10.22.2
+
+- Fixed palette drag-and-drop insertion so new fields are inserted at the actual placeholder position instead of always at the bottom.
+- Uses the sortable placeholder index as the authoritative insertion position.
+- Removed emoji-based builder UI icons and replaced them with WordPress Dashicons.
+- Bumped plugin version for reliable asset cache invalidation.

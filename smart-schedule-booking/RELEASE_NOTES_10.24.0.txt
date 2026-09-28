@@ -1,0 +1,6 @@
+FormPilot Pro 10.24.0
+
+- Fixed Section Heading Color persistence.
+- Heading color is now sanitized and saved with each form.
+- The same selected color is used for section heading text and its left border/accent.
+- Simplified the Form Appearance control label and help text.

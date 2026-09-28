@@ -1,0 +1,293 @@
+/* ================================================================
+   FormPilot Pro v4.0 — Full Responsive Stylesheet
+   Breakpoints: Mobile <480px | Tablet 481–768px | Desktop 769px+
+   ================================================================ */
+
+/* ── Box model reset ── */
+.ssb-wrap, .ssb-wrap * {
+    box-sizing: border-box !important;
+}
+
+/* ── Meet link banner ── */
+.ssb-meet-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, #0f9d58, #34a853);
+    color: #fff;
+    padding: 18px 24px;
+    border-radius: 14px;
+    margin: 20px 0;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 8px 24px rgba(15,157,88,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    word-break: break-word;
+}
+.ssb-meet-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(15,157,88,0.4);
+    color: #fff;
+}
+.ssb-meet-banner svg { flex-shrink: 0; }
+
+/* ── Loading spinner ── */
+.ssb-spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: ssb-spin 0.7s linear infinite;
+    vertical-align: middle;
+}
+@keyframes ssb-spin { to { transform: rotate(360deg); } }
+
+/* ── Form validation states ── */
+.ssb-input-error {
+    border-color: #ef4444 !important;
+    background: #fef2f2 !important;
+}
+.ssb-field-msg {
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+.ssb-field-msg.error  { color: #ef4444; display: block; }
+.ssb-field-msg.success { color: #10b981; display: block; }
+
+/* ── Utility ── */
+.ssb-hidden { display: none !important; }
+
+
+/* ================================================================
+   RESPONSIVE OVERRIDES
+   (Supplements the inline <style> block in shortcode.php)
+   ================================================================ */
+
+/* ─── Tablet: 481px – 900px ─── */
+@media (max-width: 900px) {
+    .ssb-container {
+        flex-direction: column !important;
+        margin: 1rem !important;
+        border-radius: 16px !important;
+        min-height: unset !important;
+    }
+    .ssb-sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: unset !important;
+        flex: none !important;
+        padding: 2rem !important;
+        border-radius: 16px 16px 0 0 !important;
+    }
+    .ssb-main {
+        padding: 2rem 1.5rem !important;
+    }
+    .ssb-step-title {
+        font-size: 1.35rem !important;
+    }
+    .ssb-event-title {
+        font-size: 1.35rem !important;
+    }
+    .ssb-time-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* ─── Mobile: ≤ 600px ─── */
+@media (max-width: 600px) {
+    .ssb-container {
+        margin: 0.5rem !important;
+        border-radius: 14px !important;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
+    }
+    .ssb-sidebar {
+        padding: 1.5rem !important;
+        border-radius: 14px 14px 0 0 !important;
+    }
+    .ssb-logo-box {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 1.4rem !important;
+        border-radius: 10px !important;
+        margin-bottom: 1rem !important;
+    }
+    .ssb-team-label {
+        font-size: 0.72rem !important;
+    }
+    .ssb-event-title {
+        font-size: 1.2rem !important;
+        margin: 0.5rem 0 1rem !important;
+    }
+    .ssb-info-item {
+        padding: 0.6rem 0.75rem !important;
+        font-size: 0.82rem !important;
+        gap: 0.5rem !important;
+    }
+    .ssb-description {
+        font-size: 0.82rem !important;
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
+    }
+
+    /* Main area */
+    .ssb-main {
+        padding: 1.25rem 1rem !important;
+    }
+    .ssb-step-title {
+        font-size: 1.15rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+
+    /* Timezone selector */
+    .ssb-tz-box {
+        padding: 0.75rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+    .ssb-tz-box label {
+        font-size: 0.82rem !important;
+    }
+    .ssb-select {
+        font-size: 0.92rem !important;
+        padding: 0.75rem 0.875rem !important;
+    }
+
+    /* Calendar header */
+    .ssb-cal-header {
+        margin-bottom: 1rem !important;
+    }
+    .ssb-month-label {
+        font-size: 1rem !important;
+    }
+    .ssb-nav-btn {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 1rem !important;
+    }
+
+    /* Calendar grid */
+    .ssb-calendar {
+        gap: 0.25rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    .ssb-day-hdr {
+        font-size: 0.6rem !important;
+        padding: 0.25rem !important;
+    }
+    .ssb-day {
+        font-size: 0.78rem !important;
+    }
+
+    /* Time slots */
+    .ssb-time-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+    .ssb-slot {
+        padding: 0.65rem 0.5rem !important;
+        font-size: 0.82rem !important;
+    }
+    .ssb-slot-badge {
+        font-size: 0.55rem !important;
+    }
+
+    /* Booking form */
+    .ssb-back-btn {
+        font-size: 0.875rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+    .ssb-field {
+        margin-bottom: 1.1rem !important;
+    }
+    .ssb-label {
+        font-size: 0.82rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+    .ssb-input {
+        padding: 0.8rem 0.875rem !important;
+        font-size: 0.95rem !important;
+    }
+    .ssb-radio-group {
+        gap: 1rem !important;
+        margin-top: 0.5rem !important;
+    }
+    .ssb-radio-opt {
+        font-size: 0.875rem !important;
+    }
+    .ssb-submit {
+        font-size: 0.95rem !important;
+        padding: 0.95rem !important;
+        letter-spacing: 0.3px !important;
+    }
+
+    /* Success screen */
+    .ssb-success {
+        padding: 2.5rem 1rem !important;
+    }
+    .ssb-success-icon {
+        width: 72px !important;
+        height: 72px !important;
+        font-size: 2.25rem !important;
+        margin-bottom: 1rem !important;
+    }
+    .ssb-success-title {
+        font-size: 1.5rem !important;
+    }
+    .ssb-success-text {
+        font-size: 0.9rem !important;
+    }
+
+    /* Meet banner */
+    .ssb-meet-banner {
+        font-size: 14px !important;
+        padding: 14px 16px !important;
+        gap: 10px !important;
+        border-radius: 10px !important;
+    }
+}
+
+/* ─── Very small: ≤ 360px ─── */
+@media (max-width: 360px) {
+    .ssb-container {
+        margin: 0.25rem !important;
+    }
+    .ssb-sidebar {
+        padding: 1.25rem !important;
+    }
+    .ssb-main {
+        padding: 1rem 0.875rem !important;
+    }
+    .ssb-time-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.4rem !important;
+    }
+    .ssb-slot {
+        padding: 0.6rem 0.4rem !important;
+        font-size: 0.78rem !important;
+    }
+    .ssb-event-title {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* FormPilot Pro v5.6 */
+.sfb-top-error{padding:12px 14px;border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:10px;margin-bottom:16px;}
+.sfb-field-error{display:none;margin-top:6px;font-size:12px;color:#dc2626;font-weight:600;}
+.sfb-field-error.visible{display:block;}
+.sfb-input.sfb-error,.sfb-select.sfb-error,.sfb-textarea.sfb-error{border-color:#dc2626!important;background:#fef2f2!important;box-shadow:0 0 0 3px rgba(220,38,38,.08)!important;}
+.sfb-success-modal{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(4px);}
+.sfb-success-card{position:relative;width:min(480px,100%);background:#fff;border-radius:18px;padding:34px 30px;text-align:center;box-shadow:0 25px 80px rgba(15,23,42,.25);}
+.sfb-success-close{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:28px;line-height:1;color:#64748b;cursor:pointer;}
+.sfb-success-icon{width:58px;height:58px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#ecfdf5;color:#059669;font-size:30px;font-weight:800;}
+.sfb-success-card h3{margin:0 0 10px;font-size:26px;color:#111827;}
+.sfb-success-card p{margin:0 0 22px;color:#4b5563;line-height:1.6;}
+.sfb-success-ok{border:0;border-radius:10px;padding:11px 22px;background:#111827;color:#fff;font-weight:700;cursor:pointer;}
+.sfb-payment-box .sfb-label{margin-bottom:8px;}
+
+.sfb-submit-overlay{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.78);backdrop-filter:blur(2px);border-radius:inherit;color:#111827;}
+.sfb-submit-spinner{width:34px;height:34px;border:3px solid #dbeafe;border-top-color:#2563eb;border-radius:50%;animation:sfb-spin .75s linear infinite;}
+.sfb-submit-overlay span{font-size:12px;color:#64748b;}
+.sfb-form-wrap{position:relative;}
+@keyframes sfb-spin{to{transform:rotate(360deg)}}
